@@ -34,3 +34,7 @@ jobs:
     - name: Authenticate Docker with Google Cloud
       run: gcloud auth configure-docker
 
+    - name: Authenticate Docker with Google Cloud
+      run: |
+        gcloud auth configure-docker
+        gcloud auth list
