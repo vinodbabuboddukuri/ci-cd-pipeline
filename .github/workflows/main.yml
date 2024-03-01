@@ -24,7 +24,7 @@ jobs:
     - name: Deploy to Cloud Run
       uses: google-github-actions/deploy-cloudrun@main
       with:
-        image: gcr.io/snappy-axle-412306/my-image:$GITHUB_RUN_NUMBER
+        image: us-central1-docker.pkg.dev/snappy-axle-412306/my-repo/my-image:$GITHUB_RUN_NUMBER
         service: my-image
         project_id: snappy-axle-412306
         region: us-central1
