@@ -41,7 +41,7 @@ jobs:
       - name: Deploy to Cloud Run
         run: |
           gcloud run deploy cloud-run-app \
-            --image gcr.io/virtual-firefly-412705/docker:${{ github.run_number }} \
+            --image gcr.io/snappy-axle-412306/docker:${{ github.run_number }} \
             --region us-central1 \
             --platform managed \
             --allow-unauthenticated
