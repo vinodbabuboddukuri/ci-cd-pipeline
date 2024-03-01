@@ -38,10 +38,16 @@ jobs:
         with:
           credentials_json: ${{ secrets.GCP_SA_KEY }}
 
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v0.3.0
+        with:
+          version: 'latest'
+          project_id: snappy-axle-412306
+
       - name: Deploy to Cloud Run
         run: |
-          gcloud run deploy cloud-run-app \
-            --image gcr.io/snappy-axle-412306/deploy_application_in_cloudrun:${{ github.run_number }} \
+          gcloud run deploy vinod \
+            --image gcr.io/${{ secrets.PROJECT_ID }}/deploy_application_in_cloudrun:${{ github.run_number }} \
             --region us-central1 \
             --platform managed \
             --allow-unauthenticated
