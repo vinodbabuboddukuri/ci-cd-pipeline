@@ -1,0 +1,62 @@
+# This workflow will build a docker container, publish it to Google Container Registry, and deploy it to GKE when there is a push to the "main" branch.
+#
+# To configure this workflow:
+#
+# 1. Ensure that your repository contains the necessary configuration for your Google Kubernetes Engine cluster, including deployment.yml, kustomization.yml, service.yml, etc.
+#
+# 2. Create and configure a Workload Identity Provider for GitHub (https://github.com/google-github-actions/auth#setting-up-workload-identity-federation)
+#
+# 3. Change the values for the GAR_LOCATION, GKE_ZONE, GKE_CLUSTER, IMAGE, REPOSITORY and DEPLOYMENT_NAME environment variables (below).
+#
+# For more support on how to run the workflow, please visit https://github.com/google-github-actions/setup-gcloud/tree/master/example-workflows/gke-kustomize
+
+name: Build and Deploy to Cloud Run
+
+on:
+  push:
+    branches:
+      - main
+      - feature/*
+
+env:
+  PROJECT_ID: snappy-axle-412306
+  IMAGE_NAME: my-image
+  ARTIFACT_REGISTRY: us-central1-docker.pkg.dev/snappy-axle-412306/my-repo
+  SERVICE_NAME: my-image
+  GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
+
+jobs:
+  setup-build-deploy:
+    name: Setup, Build, Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Cloud SDK
+      uses: google-github-actions/setup-gcloud@master
+      with:
+        project_id: ${{ env.PROJECT_ID }}
+        service_account_key: ${{ env.GCP_SA_KEY }}
+        export_default_credentials: true
+
+    - name: Extract version from versions.txt
+      run: echo "VERSION=$(cat versions.txt)" >> $GITHUB_ENV
+
+    - name: Build the Docker image
+      run: docker build . --tag ${{ env.ARTIFACT_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.VERSION }}
+
+    - name: Push the Docker image to Google Artifact Registry
+      run: |
+        gcloud auth configure-docker ${{ env.ARTIFACT_REGISTRY }},n.gcr.io --quiet
+        docker push ${{ env.ARTIFACT_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.VERSION }}
+
+    - name: Deploy to Cloud Run
+      run: |
+        gcloud run deploy ${{ env.SERVICE_NAME }} \
+          --image ${{ env.ARTIFACT_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.VERSION }} \
+          --region us-central1 \
+          --platform managed \
+          --allow-unauthenticated
+
+
