@@ -21,20 +21,15 @@ jobs:
         docker build . -t gcr.io/snappy-axle-412306/my-image:$GITHUB_RUN_NUMBER
         docker push gcr.io/snappy-axle-412306/my-image:$GITHUB_RUN_NUMBER
 
+    - name: Authenticate Docker with Google Cloud
+      run: gcloud auth configure-docker
+
     - name: Deploy to Cloud Run
       uses: google-github-actions/deploy-cloudrun@main
       with:
-        image: us-central1-docker.pkg.dev/snappy-axle-412306/my-repo/my-image:$GITHUB_RUN_NUMBER
+        image: gcr.io/snappy-axle-412306/my-image:$GITHUB_RUN_NUMBER
         service: my-image
         project_id: snappy-axle-412306
         region: us-central1
         platform: managed
         service_account_key: ${{ secrets.GCP_SA_KEY }}
-
-    - name: Authenticate Docker with Google Cloud
-      run: gcloud auth configure-docker
-
-    - name: Authenticate Docker with Google Cloud
-      run: |
-        gcloud auth configure-docker
-        gcloud auth list
