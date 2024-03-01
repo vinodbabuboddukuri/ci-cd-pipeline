@@ -21,7 +21,7 @@ on:
 env:
   PROJECT_ID: snappy-axle-412306
   IMAGE_NAME: my-image
-  ARTIFACT_REGISTRY: us-central1-docker.pkg.dev/snappy-axle-412306/my-repo
+  ARTIFACT_REGISTRY: us-central1
   SERVICE_NAME: my-image
   GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
 
