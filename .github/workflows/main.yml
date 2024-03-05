@@ -11,8 +11,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-
-    
+        with:
+          node-version: '20'
 
       - name: Build Docker image
         run: |
@@ -39,11 +39,22 @@ jobs:
           service_account_key: ${{ secrets.GCP_SA_KEY }}
           export_default_credentials: true
 
+
       # - name: Deploy to Cloud Run
       #   run: |
-      #     gcloud run deploy vinod \
+      #     gcloud run deploy Vinod \
       #       --image gcr.io/snappy-axle-412306/deploy_application_in_cloudrun:14 \
       #       --region us-central1 \
       #       --platform managed \
       #       --allow-unauthenticated \
       #       --project snappy-axle-412306
+- name: Deploy to Cloud Run
+  run: |
+    gcloud run deploy Vinod \
+      --image gcr.io/snappy-axle-412306/deploy_application_in_cloudrun:14 \
+      --region us-central1 \
+      --platform managed \
+      --allow-unauthenticated \
+      --project snappy-axle-412306
+  # Enable verbose output
+  -v
