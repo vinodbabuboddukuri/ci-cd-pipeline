@@ -42,7 +42,7 @@ jobs:
 
       # - name: Deploy to Cloud Run
       #   run: |
-      #     gcloud run deploy Vinod \
+      #     gcloud run deploy vinod \
       #       --image gcr.io/snappy-axle-412306/deploy_application_in_cloudrun:14 \
       #       --region us-central1 \
       #       --platform managed \
