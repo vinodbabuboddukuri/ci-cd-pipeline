@@ -56,5 +56,3 @@ jobs:
             --platform managed \
             --allow-unauthenticated \
             --project snappy-axle-412306
-        # Enable verbose output
-        -v
