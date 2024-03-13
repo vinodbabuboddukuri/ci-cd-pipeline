@@ -24,8 +24,8 @@ jobs:
 
       - name: Build and Push Docker Image
         run: |
-          docker build -t gcr.io/snappy-axle-412306/helloworld-app .
-          docker push gcr.io/snappy-axle-412306/helloworld-app
+          docker build -t gcr.io/strange-firefly-384106/helloworld-app .
+          docker push gcr.io/strange-firefly-384106/helloworld-app
 
 
       - name: Deploy to Cloud Run
