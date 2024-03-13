@@ -31,10 +31,11 @@ jobs:
       - name: Deploy to Cloud Run
         run: |
           gcloud run deploy helloworld-app \
-            --image gcr.io/${{ secrets.GCP_PROJECT_ID }}/helloworld-app \
+            --image gcr.io/snappy-axle-412306/helloworld-app \
             --platform managed \
-            --region ${{ env.REGION }} \
+            --region us-central1 \
             --allow-unauthenticated \
             --quiet
+
         env:
           REGION: "us-central1"  # Replace "us-central1" with your desired region
