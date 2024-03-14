@@ -15,36 +15,36 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Set up Cloud SDK
-      uses: google-github-actions/setup-gcloud@v0.2.0  # Example: use the specific version instead of 'master'
+      uses: google-github-actions/setup-gcloud@v0.2.0
       with:
         service_account_key: ${{ secrets.GCP_SA_KEY }}
         project_id: ${{ secrets.GCP_PROJECT_ID }}
 
-
     - name: Configure Docker
-      run: gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev --quiet
+      run: |
+        gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev --quiet
       env:
-        REGION: 'your-region' # Ensure this is correctly set or passed from your job's env variables
+        REGION: 'your-region'  # Replace with your actual region
 
     - name: Build Docker Image
-      run: docker build -t ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.SERVICE }}:${{ env.GITHUB_SHA }} .
+      run: |
+        docker build -t ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.SERVICE }}:${{ env.GITHUB_SHA }} .
       env:
-        REGION: your-region # Example: us-central1
+        REGION: your-region  # Example: us-central1
         PROJECT_ID: your-project-id
         REPOSITORY: your-repository
         SERVICE: your-service
-        GITHUB_SHA: ${{ github.sha }} # Automatically provided by GitHub Actions
-
+        GITHUB_SHA: ${{ github.sha }}  # Automatically provided by GitHub Actions
 
     - name: Deploy to Cloud Run
+      env:
+        SERVICE: your-service
+        PROJECT_ID: your-project-id
+        REGION: your-region
+        REPOSITORY: your-repository
+        GITHUB_SHA: ${{ github.sha }}
       run: |
-        gcloud run deploy ${{ env.SERVICE }} \
-          --image ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.SERVICE }}:${{ env.GITHUB_SHA }} \
-          --region ${{ env.REGION }} \
+        gcloud run deploy $SERVICE \
+          --image $REGION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$SERVICE:$GITHUB_SHA \
+          --region $REGION \
           --platform managed
-    env:
-      SERVICE: your-service
-      PROJECT_ID: your-project-id
-      REGION: your-region
-      REPOSITORY: your-repository
-      GITHUB_SHA: ${{ github.sha }}
