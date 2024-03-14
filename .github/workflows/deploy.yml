@@ -26,10 +26,13 @@ jobs:
       env:
         REGION: 'your-region' # Ensure this is correctly set or passed from your job's env variables
 
-    - name: Build and Push Docker image
+    - name: Build Docker Image
       run: |
-        docker build -t ${REGION}-docker.pkg.dev/${PROJECT_ID}/${REPOSITORY}/${SERVICE}:${GITHUB_SHA} .
-        docker push ${REGION}-docker.pkg.dev/${PROJECT_ID}/${REPOSITORY}/${SERVICE}:${GITHUB_SHA}
+        docker build -t ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.SERVICE }}:${{ env.GITHUB_SHA }} .
+    - name: Push Docker Image
+      run: |
+        docker push ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.SERVICE }}:${{ env.GITHUB_SHA }}
+
       env:
         PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
         REGION: ${{ secrets.GCP_REGION }}
