@@ -22,7 +22,9 @@ jobs:
 
 
     - name: Configure Docker
-      run: gcloud auth configure-docker ${REGION}-docker.pkg.dev
+      run: gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev --quiet
+      env:
+        REGION: 'your-region' # Ensure this is correctly set or passed from your job's env variables
 
     - name: Build and Push Docker image
       run: |
