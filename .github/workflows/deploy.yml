@@ -1,0 +1,48 @@
+name: Build and Deploy to Google Cloud Run
+
+on:
+  push:
+    branches:
+      - main  # Set to your default branch
+
+jobs:
+  setup-build-publish-deploy:
+    name: Setup, Build, Publish, and Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Cloud SDK
+      uses: google-github-actions/setup-gcloud@master
+      with:
+        service_account_key: ${{ secrets.GCP_SA_KEY }}
+        project_id: ${{ secrets.GCP_PROJECT_ID }}
+
+    - name: Configure Docker
+      run: gcloud auth configure-docker ${REGION}-docker.pkg.dev
+
+    - name: Build and Push Docker image
+      run: |
+        docker build -t ${REGION}-docker.pkg.dev/${PROJECT_ID}/${REPOSITORY}/${SERVICE}:${GITHUB_SHA} .
+        docker push ${REGION}-docker.pkg.dev/${PROJECT_ID}/${REPOSITORY}/${SERVICE}:${GITHUB_SHA}
+      env:
+        PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+        REGION: ${{ secrets.GCP_REGION }}
+        REPOSITORY: ${{ secrets.GCP_ARTIFACT_REGISTRY }}
+        SERVICE: ${{ secrets.CLOUD_RUN_SERVICE }}
+        GITHUB_SHA: ${{ github.sha }}
+
+    - name: Deploy to Cloud Run
+      run: |
+        gcloud run deploy ${SERVICE} \
+          --image ${REGION}-docker.pkg.dev/${PROJECT_ID}/${REPOSITORY}/${SERVICE}:${GITHUB_SHA} \
+          --region ${REGION} \
+          --platform managed
+      env:
+        SERVICE: ${{ secrets.CLOUD_RUN_SERVICE }}
+        PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+        REGION: ${{ secrets.GCP_REGION }}
+        REPOSITORY: ${{ secrets.GCP_ARTIFACT_REGISTRY }}
+        GITHUB_SHA: ${{ github.sha }}
