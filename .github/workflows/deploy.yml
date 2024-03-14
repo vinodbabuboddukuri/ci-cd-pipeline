@@ -38,13 +38,13 @@ jobs:
 
     - name: Deploy to Cloud Run
       run: |
-        gcloud run deploy ${SERVICE} \
-          --image ${REGION}-docker.pkg.dev/${PROJECT_ID}/${REPOSITORY}/${SERVICE}:${GITHUB_SHA} \
-          --region ${REGION} \
+        gcloud run deploy ${{ env.SERVICE }} \
+          --image ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.SERVICE }}:${{ env.GITHUB_SHA }} \
+          --region ${{ env.REGION }} \
           --platform managed
-      env:
-        SERVICE: ${{ secrets.CLOUD_RUN_SERVICE }}
-        PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
-        REGION: ${{ secrets.GCP_REGION }}
-        REPOSITORY: ${{ secrets.GCP_ARTIFACT_REGISTRY }}
-        GITHUB_SHA: ${{ github.sha }}
+    env:
+      SERVICE: your-service
+      PROJECT_ID: your-project-id
+      REGION: your-region
+      REPOSITORY: your-repository
+      GITHUB_SHA: ${{ github.sha }}
